@@ -22,11 +22,16 @@ const userSchema=new Schema({
     },   
     Permission:{
         type:Number,
+        default:0,
         required:false
     }
 })
 
 const User=mongoose.model('User',userSchema);
+
+exports.findByEmail=(email)=>{
+    return User.find({email:email})
+}
 
 exports.createOne=(data)=>{
     const newUser=new User(data);

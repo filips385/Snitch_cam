@@ -8,6 +8,10 @@ const Schema=mongoose.Schema;
 
 const AlertSchema=mongoose.Schema({
 
+    CriminalID:{
+        type:String
+    },
+
     Criminal:{
         type:String
     },

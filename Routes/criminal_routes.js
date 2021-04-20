@@ -2,6 +2,10 @@ const CriminalController=require('../Controllers/criminal_controller');
 const multer=require('multer');
 const multerStorage = multer.memoryStorage();
 const Criminal=require('../Models_Node/Criminals')
+const AuthController=require('../Controllers/authentication/auth_controller')
+const verifyUser=require('../Controllers/authentication/verifyUser.middleware')
+const ValidationMiddleware=require('../Controllers/authentication/auth.validation.middleware')
+
 
 const multerFilter = (req, file, cb) => {
   if (file.mimetype.startsWith('image')) {
@@ -29,14 +33,24 @@ function toBuffer(ab) {
 
 exports.routesConfig = (app) =>{
  
-    app.post('/CreateCriminal', [
-        CriminalController.createCriminal
-     ]);
+    app.post('/CreateCriminal', upload.single('photo'),async (req, res,next) =>{
+    //  ValidationMiddleware.validJWTNeeded;
+     // verifyUser.isAdmin;
+      const Kriminal=await Criminal.createOne(req.body);
+      console.log(req.file);
+      let image=toBuffer(req.file.buffer);
+      require('fs').writeFileSync('./penis.jpeg', Buffer.from(image))
+      Criminal.findByIdAndUpdate(Kriminal.id,{photo:image}).then(res.send("bravoo")).catch(err => console.log(err))
+
+    });
 
      app.post('/:id/uploadphoto',upload.single('photo'),async (req, res,next) => {
-    
+    //    ValidationMiddleware.validJWTNeeded;
+    //    CriminalController.isAdmin;
         const Kriminal=await Criminal.findById(req.params.id);
-        let image=toBuffer(Kriminal[0].photo.buffer);
+  
+        let image=toBuffer(req.file.buffer);
+        console.log(image);
         require('fs').writeFileSync('./penis.jpeg', Buffer.from(image))
         console.log(image);
 
@@ -44,6 +58,7 @@ exports.routesConfig = (app) =>{
      })    
 
     app.get('/criminals/',[
+       // ValidationMiddleware.validJWTNeeded,
         CriminalController.getAllCriminals
     ])
 

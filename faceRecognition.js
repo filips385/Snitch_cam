@@ -6,7 +6,7 @@ const fetch = require('node-fetch')
 const fs = require("fs");
 const Alert=require("./Models_Node/Alerts")
 
-const QUERY_IMAGE = './Images/bbt4.jpg'
+//const QUERY_IMAGE = './Images/bbt4.jpg'
 
 const faceDetectionNet = faceapi.nets.ssdMobilenetv1
 const { Canvas, Image, ImageData } = canvas;
@@ -15,17 +15,17 @@ faceapi.env.monkeyPatch({ Canvas, Image, ImageData });
 let labeledFaceDescriptors = null;
 
 
-exports.load =()=>Promise.all([
+exports.load =(imgUrl)=>Promise.all([
     faceDetectionNet.loadFromDisk('./Models'),
     faceapi.nets.faceLandmark68Net.loadFromDisk('./Models'),
     faceapi.nets.faceRecognitionNet.loadFromDisk('./Models')
-]).then(this.run)
+]).then(this.run(imgUrl))
 
-exports.run=async ()=>{
+exports.run=async (imgUrl)=>{
 
     labeledFaceDescriptors = await loadLabeledImages();
 
-    const queryImage = await canvas.loadImage(QUERY_IMAGE)
+    const queryImage = await canvas.loadImage(imgUrl)
 
 
   const resultsQuery = await faceapi.detectAllFaces(queryImage)
@@ -43,6 +43,7 @@ exports.run=async ()=>{
       let alertt=new Object();
       alertt.Criminal=bestMatch.toString()
       alertt.Date=current
+
       Alert.createOne(alertt)
       console.log(alertt);
     }
@@ -69,7 +70,7 @@ const loadLabeledImages =async () => {
               const detections = await faceapi.detectSingleFace(img).withFaceLandmarks().withFaceDescriptor()
               descriptions.push(detections.descriptor)
 
-          return new faceapi.LabeledFaceDescriptors(label.Name, descriptions)
+          return new faceapi.LabeledFaceDescriptors(label._id, descriptions)
       })
   )
 }
