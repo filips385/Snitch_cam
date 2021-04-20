@@ -10,7 +10,7 @@ const CriminalSchema=new Schema({
 
     Name:{
         type:String,
-        required:true
+        required:false
     },
     photo:{
         type: Buffer

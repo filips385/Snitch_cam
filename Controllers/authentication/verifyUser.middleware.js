@@ -50,3 +50,32 @@ exports.isPasswordandUserMatch=(req,res,next)=>{
     })
 
 }
+
+exports.isAdmin=(req,res,next)=>{
+
+    
+    if (req.headers['authorization']) {
+        try {
+            let authorization = req.headers['authorization'].split(' ');
+            if (authorization[0] !== 'Bearer') {   
+                return res.status(401).send();
+                
+            } else {
+
+                req.jwt = jwt.verify(authorization[1], secret);
+                if(req.jwt.Permission==1){
+                    return next()
+                }else{
+                    return res.status(403).send();
+                }
+                
+            }
+
+        } catch (err) {
+            return res.status(403).send();
+        }
+    } else {
+        return res.status(401).send();
+    }
+
+}

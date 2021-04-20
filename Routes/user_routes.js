@@ -25,4 +25,9 @@ exports.routesConfig = (app) =>{
       UsersController.getAllUsers
   ]);
 
+  app.delete('/deleteUser/:id',[
+      verifyUser.isAdmin,
+      UsersController.deleteUser
+  ])
+
 }

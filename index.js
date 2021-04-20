@@ -18,7 +18,7 @@ app.listen(PORT,()=>{
 })
 
 app.get('/',(req,res,next)=>{
-    face.load()
+    face.load('./Images/bbt4.jpg')
     next()
 })
 
